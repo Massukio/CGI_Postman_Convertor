@@ -6,7 +6,7 @@ import copy
 class CGI_Postman(object):
 
     def __init__(self):
-        self.postman_json_format = {'info': {'name': 'TESTTE copy', '_postman_id': '6e56bfe2-e541-5fbf-c5d2-09a67126ac07', 'schema': 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'}, 'item': []}
+        self.postman_json_format = {'info': {'name': 'Postman Collection', '_postman_id': '6e56bfe2-e541-5fbf-c5d2-09a67126ac07', 'schema': 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'}, 'item': []}
         self.request_json_format = {'name': 'request_name', 'request': {'method': 'GET', 'header': [], 'body': {}, 'url': {'raw': 'request_url', 'host': ['{{PREFIX}}'], 'path': [], 'query': []}, 'description': ''}, 'response': []}
 
     def read_file(self, file_path):
@@ -14,6 +14,7 @@ class CGI_Postman(object):
             content = f.readlines()
             # remove whitespace characters like `\n` at the end of each line
             self.content = [x.strip() for x in content]
+            f.close
         return self.content
 
     def convertor(self, arr):
@@ -74,8 +75,14 @@ class CGI_Postman(object):
 
         return self.postman_json_format
 
+    def export(self, collection):
+        file_path = input('Export file path: ')
+        with open(file_path, 'w') as outfile:
+            outfile.write(collection)
+            outfile.close
 
 test = CGI_Postman()
-items = test.convertor(test.read_file('c:\\test.log'))
+items = test.convertor(test.read_file(input('Import file path: ')))
 collection = json.dumps(test.package(items), sort_keys=False, indent=4, separators=(',', ': '))
 print(collection)
+test.export(collection)
